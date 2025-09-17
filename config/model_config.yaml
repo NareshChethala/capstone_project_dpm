@@ -1,0 +1,48 @@
+# Configuration for Credit Risk Model
+
+# Data Configuration
+data:
+  sample_size: 2000
+  n_features: 10
+  test_size: 0.2
+  random_state: 42
+
+# Model Configuration
+models:
+  logistic_regression:
+    enabled: true
+    hyperparameter_tuning: false
+  
+  random_forest:
+    enabled: true
+    hyperparameter_tuning: false
+    n_estimators: 100
+  
+  xgboost:
+    enabled: true
+    hyperparameter_tuning: false
+  
+  lightgbm:
+    enabled: false
+    hyperparameter_tuning: false
+
+# Feature Engineering Configuration
+feature_engineering:
+  include_interactions: true
+  include_polynomials: false
+  include_pca: false
+  feature_selection_k: 20
+
+# Training Configuration
+training:
+  handle_imbalance: "smote"
+  cross_validation_folds: 3
+  scoring_metric: "roc_auc"
+
+# Output Configuration
+output:
+  save_models: true
+  generate_plots: true
+  generate_reports: true
+  model_save_path: "models/"
+  output_save_path: "outputs/"

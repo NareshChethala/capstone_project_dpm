@@ -69,9 +69,18 @@ ehthumbs.db
 Thumbs.db
 
 # Project specific
-models/
 data/raw/
 data/processed/
 logs/
-outputs/
 *.log
+
+# Keep model and output directories but ignore large files
+models/*.joblib
+models/*.pkl
+outputs/*.png
+outputs/*.jpg
+outputs/*.jpeg
+
+# Keep important CSV and text files
+!outputs/*.csv
+!outputs/*.txt

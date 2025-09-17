@@ -63,6 +63,7 @@ def main():
         # Step 3: Feature Engineering
         logger.info("Step 3: Feature Engineering")
         
+        # Apply feature engineering to training set first
         X_train_engineered = feature_engineer.feature_engineering_pipeline(
             X_train, y_train,
             include_interactions=True,
@@ -71,13 +72,24 @@ def main():
             feature_selection_k=20
         )
         
-        X_test_engineered = feature_engineer.feature_engineering_pipeline(
-            X_test, y_test,
-            include_interactions=True,
-            include_polynomials=False,
-            include_pca=False,
-            feature_selection_k=20
-        )
+        # Apply the same transformations to test set (without refitting)
+        # Create features for test set
+        X_test_with_features = feature_engineer.calculate_financial_ratios(X_test)
+        X_test_with_features = feature_engineer.create_industry_features(X_test_with_features)
+        X_test_with_features = feature_engineer.create_aggregate_features(X_test_with_features)
+        X_test_with_features = feature_engineer.create_interaction_features(X_test_with_features)
+        
+        # Select the same features as training set
+        if feature_engineer.feature_selector is not None:
+            X_test_engineered = pd.DataFrame(
+                feature_engineer.feature_selector.transform(X_test_with_features.select_dtypes(include=[np.number])),
+                columns=X_train_engineered.columns,
+                index=X_test.index
+            )
+        else:
+            # If no feature selection was applied, match columns
+            common_features = [col for col in X_train_engineered.columns if col in X_test_with_features.columns]
+            X_test_engineered = X_test_with_features[common_features]
         
         logger.info(f"Engineered features shape: {X_train_engineered.shape}")
         
